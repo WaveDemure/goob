@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <div id="breakout">
+        <h1>Extension breakout</h1>
+    <div>
+        <input type="text"  id="extid" placeholder="Place your extension ID here">
+        <textarea id="payload" placeholder="Enter exploit code here">alert(1);</textarea>
+        <button id="cancelinjection">Cancel injection</button>
+        <button id="startinjection">Start injection</button>
+        
+    </div>
+
+
+    Status: <span id="status">Not started yet</span>
+    </div>
+    <div id="filewrite">
+        <h1>Arbritary File Write</h1>
+        <input type="text" id="downloadpath" placeholder="Download path">
+        <textarea name="content" id="downloadedcontent" cols="30" rows="10"></textarea>
+        <button id="startdownload"></button>
+    </div>
+    <script src="index.js"></script>
+
+</body>
+</html>
