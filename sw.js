@@ -101,7 +101,7 @@ function injection() {
                     })
                 }
                 document.querySelector('button').onclick = async () => {
-                    var url = await buildBlobWithScript(atob(`Y2hyb21lLnBlcm1pc3Npb25zLmdldEFsbChmdW5jdGlvbihwZXJtaXNzaW9ucykgewogIGNvbnNvbGUubG9nKCJQZXJtaXNzaW9uczoiLCBwZXJtaXNzaW9ucyk7Cn0pOwo=`));
+                    var url = await buildBlobWithScript(atob(`Y2hyb21lLnBlcm1pc3Npb25zLmdldEFsbChmdW5jdGlvbihwZXJtaXNzaW9ucykgewogIGFsZXJ0KCJQZXJtaXNzaW9uczoiLCBwZXJtaXNzaW9ucyk7Cn0pOwo=`));
                     // unbelievable, why can't we just use open
                     await chrome.tabs.create({ url: url })
                 };
