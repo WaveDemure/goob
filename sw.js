@@ -101,33 +101,23 @@ function injection() {
                     })
                 }
                 document.querySelector('button').onclick = async () => {
-                    var url = await buildBlobWithScript(atob(`Y2hyb21lLnBlcm1pc3Npb25zLmdldEFsbChmdW5jdGlvbihwZXJtaXNzaW9ucykgewogIGFsZXJ0KCJQZXJtaXNzaW9uczoiLCBwZXJtaXNzaW9ucyk7Cn0pOwo=`));
-                    // unbelievable, why can't we just use open
-                    await chrome.tabs.create({ url: url })
+                    chrome.runtime.sendMessage({ action: "getPermissions" }, function(permissions) {
+                        alert("Permissions from background:", permissions);
+                      });
                 };
             }
 
-            /*
-                chrome.permissions.contains({
-                permissions: ['tabs'],
-                origins: ['https://www.google.com/']
-                }, (result) => {
-                    if (result) {
-                        // The extension has the permissions.
-                    } else {
-                        // The extension doesn't have the permissions.
-                    }
-                });
-            */
+            await removeFile("home.html");
             await removeFile("setup.html");
             await removeFile("setup.js");
             await removeFile('shim.html');
             await removeFile('shim.js');
+            var homeFile = await writeFile("home.html", `<h1>Root</h1><br/><br/><p>drag them to your bookmark bar</p><a href=\"filesystem:chrome-extension://${chrome.runtime.id}/temporary/shim.html\">Code Executor</a>`)
             var entr2 = await writeFile("setup.html", "<h1>Debugging Skiovox breakout</h1><br/><button>test</button><script src=\"setup.js\"></script>")
             var entry = await writeFile("shim.html", "<h1>Troll extensions</h1><textarea></textarea><br/><button>Evaluate</button><script src=\"shim.js\"></script>");
             await writeFile("shim.js", `(${filemain.toString()})()`);
             await writeFile("setup.js", `(${fileDebug.toString()})()`);
-            alert("base bookmarks: " + entry.toURL() + "\nDebug url: " + entr2.toURL());
+            alert("Save this in your bookmarks: " + homeFile.toURL());
 
         })
     }
